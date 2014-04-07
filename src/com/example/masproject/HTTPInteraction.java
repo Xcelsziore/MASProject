@@ -1,6 +1,7 @@
 package com.example.masproject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 
 import android.os.StrictMode;
 import android.util.Log;
@@ -23,7 +23,6 @@ public class HTTPInteraction {
 
 	public HTTPInteraction() {
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-				.detectNetwork() // or .detectAll() for all detectable problems
 				.penaltyDialog() // show a dialog
 				.permitNetwork() // permit Network access
 				.build());
@@ -54,27 +53,37 @@ public class HTTPInteraction {
 		return is;
 	}
 
-	public JSONArray parseHttpResponse() {
-
-		JSONArray jArray = null;
+	public String parseResponse(HttpResponse response) {
+		 BufferedReader in = null;
 		try {
-			String line = null;
-			String jsonString = null;
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-			is.close();
-			jsonString = sb.toString();
-			jArray = new JSONArray(jsonString);
-			System.out.println(jArray);
-		} catch (Exception e) {
-			Log.e("log_tag",
-					"Error in http connection and jsonh" + e.toString());
+			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return jArray;
+        StringBuffer sb = new StringBuffer("");
+        String line = "";
+        String NL = System.getProperty("line.separator");
+        try {
+			while ((line = in.readLine()) != null) {
+			    sb.append(line + NL);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        try {
+			in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        String result = sb.toString();
+        return result;
 	}
 
 }

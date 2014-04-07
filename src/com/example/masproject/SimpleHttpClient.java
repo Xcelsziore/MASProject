@@ -88,12 +88,14 @@ public class SimpleHttpClient {
      * @return The result of the request
      * @throws Exception
      */
-    public static String executeHttpGet(String url) throws Exception {
+    public static String executeHttpGet(String url, String sessionID) throws Exception {
         BufferedReader in = null;
         try {
             HttpClient client = getHttpClient();
             HttpGet request = new HttpGet();
             request.setURI(new URI(url));
+            //if (sessionID != "blank")
+			//request.setHeader("Cookie", "PHPSESSID=" + sessionID);
             HttpResponse response = client.execute(request);
             in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 

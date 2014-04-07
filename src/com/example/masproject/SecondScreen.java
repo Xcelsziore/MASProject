@@ -1,4 +1,11 @@
 package com.example.masproject;
+import java.io.IOException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,45 +15,45 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class SecondScreen extends Activity {
-	    /** Called when the activity is first created. */
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.add_activity_screen);
 	 
 	        TextView txtName = (TextView) findViewById(R.id.txtName);
-	      //  TextView txtEmail = (TextView) findViewById(R.id.txtEmail);
 	        Button btnClose = (Button) findViewById(R.id.btnClose);
 	 
 	        Intent i = getIntent();
 	        // Receiving the Data
 	        String name = i.getStringExtra("name");
-	        String email = i.getStringExtra("email");
-	        Log.e("Second Screen", name + "." + email);
+	        String jSessionid = i.getStringExtra("sess");
+	        Log.e("Second Screen", name + " - " + jSessionid);
 	 
 	        // Displaying Received data
-	        txtName.setText(name);
-	    //    txtEmail.setText(email);
+	        HTTPInteraction httpobj= new HTTPInteraction();
+			try {
+				HttpGet request = new HttpGet("http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/events?date=2014-03-08");
+				request.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+				DefaultHttpClient httpclient = new DefaultHttpClient();
+	            try {
+					HttpResponse resp = httpclient.execute(request);
+			        txtName.setText(httpobj.parseResponse(resp));       
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}	
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	 
 	        // Binding Click event to Button
-	        btnClose.setOnClickListener(new View.OnClickListener() {
-	 
+	        btnClose.setOnClickListener(new View.OnClickListener() {	 
 	            public void onClick(View arg0) {
 	            	//Starting a new Intent
 	                Intent nextScreen = new Intent(getApplicationContext(), MainListActivity.class);
-
-	                //Sending data to another Activity
-	                //nextScreen.putExtra("name", inputName.getText().toString());
-	                //nextScreen.putExtra("email", inputPassword.getText().toString());
-	              //  Log.e("n", inputName.getText()+"."+ inputPassword.getText());
-
-	                startActivity(nextScreen);
-	               
-	               // finish();
+	                startActivity(nextScreen);	               
 	            }
-	        });
-	 
+	        });	 
 	    }
 	}
-
-
