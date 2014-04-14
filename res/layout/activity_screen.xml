@@ -3,15 +3,15 @@
     android:id="@+id/LinearLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
+    android:orientation="vertical">
     <TextView
         android:id="@+id/txtDate"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dip"
+        android:layout_marginBottom="8dip"
         android:gravity="center"
-        android:layout_weight=".01"
-        android:textSize="18sp" />
+        android:textSize="25sp" />
 	<LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent" 
@@ -20,24 +20,19 @@
         android:id="@+id/btnPrev"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
             android:text="Prev"
+        	android:layout_margin="4dip"
             android:layout_weight="1.0" />
         <Button
         android:id="@+id/btnNext"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
             android:text="Next"
+        	android:layout_margin="4dip"
             android:layout_weight="1.0" />
     </LinearLayout>
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="200dip"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Add Activity" />
-    <TextView
-        android:id="@+id/txtName"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.08"
-        android:textSize="18dip" />
-
+    <ExpandableListView
+        android:id="@+id/lvExp"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_height="fill_parent" >
+    </ExpandableListView>
 </LinearLayout>
