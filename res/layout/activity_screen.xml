@@ -6,14 +6,6 @@
     android:orientation="vertical" >
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".01"
-        android:gravity="center"
-        android:text="Activities for"
-        android:textSize="20sp" />
-
-    <TextView
         android:id="@+id/txtDate"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
