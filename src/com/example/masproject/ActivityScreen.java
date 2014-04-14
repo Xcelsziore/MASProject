@@ -1,13 +1,18 @@
 package com.example.masproject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,7 +32,8 @@ public class ActivityScreen extends Activity {
 	SimpleDateFormat urlFormat = new SimpleDateFormat("y-MM-d");	 
 	String infoUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/events?date=";
 	String jSessionid;
-    
+	String msg;
+	List<Map<String, String>> eventList;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_screen);
@@ -80,7 +86,23 @@ public class ActivityScreen extends Activity {
         });	 
         
      }
-    
+    @SuppressWarnings("unchecked")
+	public void mapReply(String src) throws IOException {   
+    	//convert string reply to list of mapped event data
+    	eventList = new ArrayList<Map<String, String>>();
+    	String[] events = src.split("\\},\\{");
+    	for (int i = 0;i<events.length;i++) {
+    		if (i == 0) {
+    	    	events[i] = events[i].substring(1) + "}";    			
+    		} else if (i==events.length-1) {
+    			events[i] = "{" + events[i].substring(0,events[i].length()-1);    			
+    		} else {
+    			events[i] = "{" + events[i] + "}";    			
+    		}
+    		eventList.add((Map<String,String>) new ObjectMapper().readValue(events[i], new TypeReference<Map<String,String>>() {}));
+            System.out.println("Got " + eventList.get(i)); 
+    	}
+    } 
     void getData() {
     	// Displaying Received data
         HTTPInteraction httpobj= new HTTPInteraction();
@@ -90,7 +112,9 @@ public class ActivityScreen extends Activity {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
             try {
 				HttpResponse resp = httpclient.execute(request);
-		        txtName.setText(httpobj.parseResponse(resp));       
+				msg = httpobj.parseResponse(resp);
+		        txtName.setText(msg);  
+		        mapReply(msg);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
