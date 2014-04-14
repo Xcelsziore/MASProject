@@ -20,7 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class FirstScreen extends Activity {
+public class LoginScreen extends Activity {
 
 	 Button loginButton;
 	 Button signupButton;
@@ -29,13 +29,15 @@ public class FirstScreen extends Activity {
 	 AlertDialog alert;
 	 AlertDialog.Builder builder;
 	 String jSessionid;
-	 String msg;
+	 String loginUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
 		inputName = (EditText) findViewById(R.id.et_un);
+		inputName.setText("test1");
 		inputPassword = (EditText) findViewById(R.id.et_pw);
+		inputPassword.setText("test");
         
         loginButton = (Button) findViewById(R.id.button1);
         signupButton = (Button) findViewById(R.id.button2);        
@@ -43,6 +45,7 @@ public class FirstScreen extends Activity {
         signupButton.setOnClickListener(myhandler2);
         
         jSessionid = "blank";
+        loginUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/login?username=";
         builder = new AlertDialog.Builder(this);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 	           public void onClick(DialogInterface dialog, int id) {
@@ -56,8 +59,10 @@ public class FirstScreen extends Activity {
 	//Login Button     
     View.OnClickListener myhandler1 = new View.OnClickListener() {
         public void onClick(View v) {       	
-            //Attempting Login            
-            HttpGet httget = new HttpGet("http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/login?username=test1&password=test");
+            //Attempting Login        
+            loginUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/login?username=";
+        	loginUrl  = loginUrl + inputName.getText().toString().trim() + "&password=" + inputPassword.getText().toString().trim(); 
+            HttpGet httget = new HttpGet(loginUrl);
             DefaultHttpClient httpclient = new DefaultHttpClient();
             try {
 				HttpResponse response = httpclient.execute(httget);
