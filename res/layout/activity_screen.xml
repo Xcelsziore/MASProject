@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".01"
+        android:gravity="center"
+        android:text="Activities for"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_weight=".01"
+        android:textSize="18sp" />
+	<LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">
+        <Button
+        android:id="@+id/btnPrev"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Prev"
+            android:layout_weight="1.0" />
+        <Button
+        android:id="@+id/btnNext"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Next"
+            android:layout_weight="1.0" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="200dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Add Activity" />
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.08"
+        android:textSize="18dip" />
+
+</LinearLayout>
