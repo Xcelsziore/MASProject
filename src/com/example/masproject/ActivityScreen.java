@@ -6,35 +6,45 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class ActivityScreen extends Activity {
 	TextView txtDate;
+	TextView txtDesc;
 	Calendar cal;
 	SimpleDateFormat titleFormat = new SimpleDateFormat("EEEE, MM/d/yy");	
 	SimpleDateFormat urlFormat = new SimpleDateFormat("y-MM-d");	 
 	String dateTitle;
 	String dateUrl;
-	String infoUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/events?date=";
+	String eventUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/events";
 	String actUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/activities";
 	String jSessionid;
     JSONArray jadd;
@@ -48,6 +58,10 @@ public class ActivityScreen extends Activity {
     AlertDialog.Builder editbuilder;
     //AlertDialog.Builder viewbuilder;
     LayoutInflater inflater;
+    ArrayList<String> hourslist;
+    StableArrayAdapter adapter;
+    Map<String, String> activityIDs;
+    double mHours;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_screen);
@@ -63,8 +77,8 @@ public class ActivityScreen extends Activity {
         cal = Calendar.getInstance();   
         cal.setTime(new Date());         
         // Getting session cookie from login screen 
-        Intent i = getIntent();
-        jSessionid = i.getStringExtra("sess");     
+        Intent mI = getIntent();
+        jSessionid = mI.getStringExtra("sess");     
         // Buttons
         Button btnPrev = (Button) findViewById(R.id.btnPrev);
         Button btnNext = (Button) findViewById(R.id.btnNext);
@@ -114,25 +128,45 @@ public class ActivityScreen extends Activity {
             expListView.expandGroup(1); 	
     	if (listDataChild.get(listDataHeader.get(2)).size() > 0)
             expListView.expandGroup(2); 
-    	// Instantiate an AlertDialog.Builder
+    	// Init hours array
+    	String[] hourvals = new String[] { "0.5", "1.0", "1.5",
+                "2.0", "2.5", "3.0", "3.5", "4.0",
+                "4.5", "5.0", "5.5", "6.0", "6.5", "7.0",
+                "7.5", "8.0", "8.5", "9.0", "9.5", "10.0"};
+        hourslist = new ArrayList<String>();
+        for (int i = 0; i < hourvals.length; ++i) {
+        	hourslist.add(hourvals[i]);
+        }
+        adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, hourslist);
     }
-    private void addActivity(int childpos) {
+    private void addActivity(final int childpos) {
     	addbuilder.setView(inflater.inflate(R.layout.alert_view, null))
     	.setTitle("Add Activity: " + listDataChild.get(listDataHeader.get(0)).get(childpos))
     	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	           	public void onClick(DialogInterface dialog, int id) {
-	        	   alert.dismiss();
-	           	};
+           	public void onClick(DialogInterface dialog, int id) {
+        	   alert.dismiss();
+           	};
 		})
     	.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-	           	public void onClick(DialogInterface dialog, int id) {
-	        	   alert.dismiss();
-	           	};
+           	public void onClick(DialogInterface dialog, int id) {
+           		addDateData(listDataChild.get(listDataHeader.get(0)).get(childpos),
+  	    			  mHours, txtDesc.getText().toString());
+        		updateList();
+	        	alert.dismiss();
+           	};
 		});
     	alert = addbuilder.create();
     	alert.show();
-		TextView text = (TextView) alert.findViewById(R.id.desc);
-		text.setText("Android custom dialog " + childpos);
+    	txtDesc = (TextView) alert.findViewById(R.id.desc);
+    	txtDesc.setText("SelfReport-Android");
+		ListView lv = (ListView) alert.findViewById(R.id.hours);
+	    lv.setAdapter(adapter);
+	    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+	      @Override
+	      public void onItemClick(AdapterView<?> p,View v,int pos,long id) {
+	    	  mHours = 0.5*(pos+1);
+	      }
+	    });
     }
     private void editActivity(int childpos) {
     	//listDataChild.get(listDataHeader.get(1)).get(childpos);
@@ -164,9 +198,11 @@ public class ActivityScreen extends Activity {
         listDataHeader.add("Auto-Reported Activities"); 
         // Adding child data
         List<String> newactivity = new ArrayList<String>();
+        activityIDs = new HashMap<String, String>();
         for (i=0;i<jadd.length();i++) {
         	try {
 				newactivity.add(jadd.getJSONObject(i).getString("Name"));
+				activityIDs.put(jadd.getJSONObject(i).getString("Name"),jadd.getJSONObject(i).getString("ActivityID"));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -181,7 +217,6 @@ public class ActivityScreen extends Activity {
         List<String> autoactivitylist = new ArrayList<String>();
         for (int i=0;i<jday.length();i++) {
         	try {
-                Log.i("TPE ",jday.getJSONObject(i).getString("ThirdPartyEntry"));
         		if (jday.getJSONObject(i).getString("ThirdPartyEntry").equals("0")) {
         			selfactivitylist.add(jday.getJSONObject(i).getString("Name") + "\n"
         				+ jday.getJSONObject(i).getString("Hours") + " hours");
@@ -219,7 +254,8 @@ public class ActivityScreen extends Activity {
             try {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
-				jadd = new JSONArray(src);				
+				jadd = new JSONArray(src);		
+                //Log.i("Act Data ",jadd.toString());						
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -233,15 +269,14 @@ public class ActivityScreen extends Activity {
     void getDateData() {
         HTTPInteraction httpobj= new HTTPInteraction();
 		try {
-			HttpGet request = new HttpGet(infoUrl + dateUrl);
+			HttpGet request = new HttpGet(eventUrl+"?date="+dateUrl);
 			request.setHeader("Cookie", "PHPSESSID=" + jSessionid);
 			DefaultHttpClient httpclient = new DefaultHttpClient();
             try {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
 				jday = new JSONArray(src);
-                Log.i("Date Data ",jday.toString());
-				
+                Log.i("Date Data ",jday.toString());				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -250,5 +285,39 @@ public class ActivityScreen extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+    }
+	// Add New Activity via POST
+	void addDateData(String actname, double numhours, String mynote) {
+		String myID = activityIDs.get(actname);
+        //Log.i("Add Date Data ", actname+" "+myID+" "+numhours+" "+mynote);
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			HttpPost post = new HttpPost(eventUrl);
+		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
+		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
+		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
+		    nameValuePairs.add(new BasicNameValuePair("hours", ""+numhours));
+		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+            try {
+				httpclient.execute(post);		
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+    private class StableArrayAdapter extends ArrayAdapter<String> {
+	    HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+	    public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
+	      super(context, textViewResourceId, objects);
+	      for (int i = 0; i < objects.size(); ++i) {
+	        mIdMap.put(objects.get(i), i);
+	      }
+	    }
     }
 }

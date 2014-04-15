@@ -17,12 +17,12 @@
         android:background="@android:drawable/editbox_background"
         android:inputType="text"
         />
-    <!-- 
     <ListView
         android:id="@+id/hours"
         android:layout_width="match_parent"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_height="fill_parent" >
-    </ListView> -->
+        android:layout_height="fill_parent"
+        android:listSelector="@drawable/bkg"  >
+    </ListView>
 
 </LinearLayout>
