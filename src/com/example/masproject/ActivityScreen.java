@@ -58,7 +58,7 @@ public class ActivityScreen extends Activity {
     AlertDialog alert;
     AlertDialog.Builder addbuilder;
     AlertDialog.Builder editbuilder;
-    //AlertDialog.Builder viewbuilder;
+    AlertDialog.Builder viewbuilder;
     LayoutInflater inflater;
     ArrayList<String> hourslist;
     StableArrayAdapter adapter;
@@ -70,6 +70,7 @@ public class ActivityScreen extends Activity {
         super.onCreate(savedInstanceState);
         addbuilder = new AlertDialog.Builder(this);
         editbuilder = new AlertDialog.Builder(this);
+        viewbuilder = new AlertDialog.Builder(this);
         inflater = this.getLayoutInflater();
         // Time and date init
         txtDate = (TextView) findViewById(R.id.txtDate);            
@@ -120,7 +121,8 @@ public class ActivityScreen extends Activity {
             		addActivity(childPosition);
             	} else if (groupPosition == 1) { // Edit/Delete Activity
             		editActivity(childPosition);
-            	} else if (groupPosition == 2) { // View Activity           		
+            	} else if (groupPosition == 2) { // View Activity   
+            		viewActivity(childPosition);        		
             	}
                 return false;
             }
@@ -141,7 +143,41 @@ public class ActivityScreen extends Activity {
         }
         adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, hourslist);
     }
-    private void addActivity(final int childpos) {
+    private void viewActivity(int childpos) {
+    	String sHours = "0.0";
+    	String rBy = "blank";
+    	String myNote = "blank";
+		String name[] = listDataChild.get(listDataHeader.get(2)).get(childpos).split("\n");
+    	final String childname = name[0];
+    	viewbuilder.setView(inflater.inflate(R.layout.view_view, null))
+    	.setTitle("View Activity: " + childname)
+    	.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+           	public void onClick(DialogInterface dialog, int id) {
+	        	alert.dismiss();
+           	};
+		});
+    	alert = viewbuilder.create();
+    	alert.show();
+    	txtDesc = (TextView) alert.findViewById(R.id.descview);
+    	TextView txtHours = (TextView) alert.findViewById(R.id.hourview);
+    	TextView txtBy = (TextView) alert.findViewById(R.id.reportby);
+    	for (int i=0;i<jday.length();i++) {
+        	try {
+        		if (jday.getJSONObject(i).getString("Name").equals(childname)) {
+        			myNote = jday.getJSONObject(i).getString("Note");
+        			sHours = jday.getJSONObject(i).getString("Hours");
+        			rBy = jday.getJSONObject(i).getString("ReportedBy");
+        			break;
+        		}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+    	txtDesc.setText(myNote);
+    	txtHours.setText(sHours);
+    	txtBy.setText(rBy);
+    }
+    private void addActivity(int childpos) {
     	mHours = 0.0;
 		String name[] = listDataChild.get(listDataHeader.get(0)).get(childpos).split("\n");
     	final String childname = name[0];
@@ -204,7 +240,19 @@ public class ActivityScreen extends Activity {
     	alert = editbuilder.create();
     	alert.show();
     	txtDesc = (TextView) alert.findViewById(R.id.desc);
-    	txtDesc.setText("EditedReport-Android");
+    	String myNote = "EditedReport-Android";
+    	for (int i=0;i<jday.length();i++) {
+        	try {
+        		if (jday.getJSONObject(i).getString("Name").equals(childname)) {
+        			myNote = jday.getJSONObject(i).getString("Note");
+        			mHours = Double.valueOf(jday.getJSONObject(i).getString("Hours")).doubleValue();
+        			break;
+        		}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+    	txtDesc.setText(myNote);
 		ListView lv = (ListView) alert.findViewById(R.id.hours);
 	    lv.setAdapter(adapter);
 	    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -306,7 +354,7 @@ public class ActivityScreen extends Activity {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
 				jday = new JSONArray(src);
-                //Log.i("Date Data ",jday.toString());				
+                Log.i("Date Data ",jday.toString());				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -348,12 +396,13 @@ public class ActivityScreen extends Activity {
         	try {
         		if (jday.getJSONObject(i).getString("Name").equals(actname)) {
         			myEvID = jday.getJSONObject(i).getString("EventID");
+        			break;
         		}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
         }
-        Log.i("Edit Date Data ", actname+" "+myID+" "+myEvID+" "+mHours+" "+mynote);
+        //Log.i("Edit Date Data ", actname+" "+myID+" "+myEvID+" "+mHours+" "+mynote);
 		try {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost post = new HttpPost(editUrl);
@@ -377,18 +426,18 @@ public class ActivityScreen extends Activity {
 		}
 	}
 	void delDateData(String actname, String mynote) {
-		String myID = activityIDs.get(actname);
 		String myEvID = activityIDs.get(actname);
 		for (int i=0;i<jday.length();i++) {
         	try {
         		if (jday.getJSONObject(i).getString("Name").equals(actname)) {
         			myEvID = jday.getJSONObject(i).getString("EventID");
+        			break;
         		}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
         }
-        Log.i("Del Date Data ", actname+" "+myID+" "+myEvID+" "+mHours+" "+mynote);
+        //Log.i("Del Date Data ", actname+" "+myEvID+" "+mHours+" "+mynote);
 		try {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpDelete del = new HttpDelete(eventUrl+"/"+myEvID);
