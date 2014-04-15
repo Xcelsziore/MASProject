@@ -140,8 +140,10 @@ public class ActivityScreen extends Activity {
         adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, hourslist);
     }
     private void addActivity(final int childpos) {
+    	mHours = 0.0;
+    	final String childname = listDataChild.get(listDataHeader.get(0)).get(childpos);
     	addbuilder.setView(inflater.inflate(R.layout.alert_view, null))
-    	.setTitle("Add Activity: " + listDataChild.get(listDataHeader.get(0)).get(childpos))
+    	.setTitle("Add Activity: " + childname)
     	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
            	public void onClick(DialogInterface dialog, int id) {
         	   alert.dismiss();
@@ -149,10 +151,11 @@ public class ActivityScreen extends Activity {
 		})
     	.setPositiveButton("Save", new DialogInterface.OnClickListener() {
            	public void onClick(DialogInterface dialog, int id) {
-           		addDateData(listDataChild.get(listDataHeader.get(0)).get(childpos),
-  	    			  mHours, txtDesc.getText().toString());
-        		updateList();
-	        	alert.dismiss();
+           		if (mHours > 0) {
+	           		addDateData(childname, txtDesc.getText().toString());
+	        		updateList();
+		        	alert.dismiss();
+           		}
            	};
 		});
     	alert = addbuilder.create();
@@ -169,20 +172,43 @@ public class ActivityScreen extends Activity {
 	    });
     }
     private void editActivity(int childpos) {
-    	//listDataChild.get(listDataHeader.get(1)).get(childpos);
-    	editbuilder.setTitle("Edit Activity")
+    	mHours = 0.0;
+    	final String childname = listDataChild.get(listDataHeader.get(1)).get(childpos);
+    	editbuilder.setView(inflater.inflate(R.layout.alert_view, null))
+    	.setTitle("Edit Activity: "+childname)
     	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	           	public void onClick(DialogInterface dialog, int id) {
-	        	   alert.dismiss();
-	           	};
+           	public void onClick(DialogInterface dialog, int id) {
+           		alert.dismiss();
+           	};
 		})
-    	.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-	           	public void onClick(DialogInterface dialog, int id) {
-	        	   alert.dismiss();
-	           	};
+		.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+           	public void onClick(DialogInterface dialog, int id) {
+           		delDateData(childname, txtDesc.getText().toString());
+        		//updateList();
+           		alert.dismiss();
+           	};
+		})
+    	.setPositiveButton("Save Edit", new DialogInterface.OnClickListener() {
+           	public void onClick(DialogInterface dialog, int id) {
+           		if (mHours > 0) {
+           			editDateData(childname, txtDesc.getText().toString());
+	        		//updateList();
+           			alert.dismiss();
+           		}
+           	};
 		});
     	alert = editbuilder.create();
     	alert.show();
+    	txtDesc = (TextView) alert.findViewById(R.id.desc);
+    	txtDesc.setText("EditedReport-Android");
+		ListView lv = (ListView) alert.findViewById(R.id.hours);
+	    lv.setAdapter(adapter);
+	    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+	      @Override
+	      public void onItemClick(AdapterView<?> p,View v,int pos,long id) {
+	    	  mHours = 0.5*(pos+1);
+	      }
+	    });
     }
     // List data init
     private void prepareListData() {
@@ -276,7 +302,7 @@ public class ActivityScreen extends Activity {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
 				jday = new JSONArray(src);
-                Log.i("Date Data ",jday.toString());				
+                //Log.i("Date Data ",jday.toString());				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -287,7 +313,7 @@ public class ActivityScreen extends Activity {
 		}
     }
 	// Add New Activity via POST
-	void addDateData(String actname, double numhours, String mynote) {
+	void addDateData(String actname, String mynote) {
 		String myID = activityIDs.get(actname);
         //Log.i("Add Date Data ", actname+" "+myID+" "+numhours+" "+mynote);
 		try {
@@ -297,7 +323,7 @@ public class ActivityScreen extends Activity {
 		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
 		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
 		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
-		    nameValuePairs.add(new BasicNameValuePair("hours", ""+numhours));
+		    nameValuePairs.add(new BasicNameValuePair("hours", ""+mHours));
 		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
             try {
@@ -310,6 +336,56 @@ public class ActivityScreen extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	void editDateData(String actname, String mynote) {
+		String name[] = actname.split("\n");
+		String myID = activityIDs.get(name[0]);
+        Log.i("Edit Date Data ", name[0]+" "+myID+" "+mHours+" "+mynote);
+//		try {
+//			DefaultHttpClient httpclient = new DefaultHttpClient();
+//			HttpPost post = new HttpPost(eventUrl);
+//		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+//		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
+//		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
+//		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
+//		    nameValuePairs.add(new BasicNameValuePair("hours", ""+numhours));
+//		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+//            try {
+//				httpclient.execute(post);		
+//			} catch (ClientProtocolException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}	
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+	}
+	void delDateData(String actname, String mynote) {
+		String arr[] = actname.split("\n");
+		String myID = activityIDs.get(arr[0]);
+        Log.i("Del Date Data ", arr[0]+" "+myID+" "+mHours+" "+mynote);
+//		try {
+//			DefaultHttpClient httpclient = new DefaultHttpClient();
+//			HttpPost post = new HttpPost(eventUrl);
+//		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+//		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
+//		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
+//		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
+//		    nameValuePairs.add(new BasicNameValuePair("hours", ""+numhours));
+//		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+//            try {
+//				httpclient.execute(post);		
+//			} catch (ClientProtocolException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}	
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
     private class StableArrayAdapter extends ArrayAdapter<String> {
 	    HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
