@@ -12,6 +12,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -45,6 +46,7 @@ public class ActivityScreen extends Activity {
 	String dateTitle;
 	String dateUrl;
 	String eventUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/events";
+	String editUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/eventEdit";
 	String actUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/activities";
 	String jSessionid;
     JSONArray jadd;
@@ -141,7 +143,8 @@ public class ActivityScreen extends Activity {
     }
     private void addActivity(final int childpos) {
     	mHours = 0.0;
-    	final String childname = listDataChild.get(listDataHeader.get(0)).get(childpos);
+		String name[] = listDataChild.get(listDataHeader.get(0)).get(childpos).split("\n");
+    	final String childname = name[0];
     	addbuilder.setView(inflater.inflate(R.layout.alert_view, null))
     	.setTitle("Add Activity: " + childname)
     	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -173,7 +176,8 @@ public class ActivityScreen extends Activity {
     }
     private void editActivity(int childpos) {
     	mHours = 0.0;
-    	final String childname = listDataChild.get(listDataHeader.get(1)).get(childpos);
+		String name[] = listDataChild.get(listDataHeader.get(1)).get(childpos).split("\n");
+    	final String childname = name[0];
     	editbuilder.setView(inflater.inflate(R.layout.alert_view, null))
     	.setTitle("Edit Activity: "+childname)
     	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -184,7 +188,7 @@ public class ActivityScreen extends Activity {
 		.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
            	public void onClick(DialogInterface dialog, int id) {
            		delDateData(childname, txtDesc.getText().toString());
-        		//updateList();
+        		updateList();
            		alert.dismiss();
            	};
 		})
@@ -192,7 +196,7 @@ public class ActivityScreen extends Activity {
            	public void onClick(DialogInterface dialog, int id) {
            		if (mHours > 0) {
            			editDateData(childname, txtDesc.getText().toString());
-	        		//updateList();
+	        		updateList();
            			alert.dismiss();
            		}
            	};
@@ -338,54 +342,67 @@ public class ActivityScreen extends Activity {
 		}
 	}
 	void editDateData(String actname, String mynote) {
-		String name[] = actname.split("\n");
-		String myID = activityIDs.get(name[0]);
-        Log.i("Edit Date Data ", name[0]+" "+myID+" "+mHours+" "+mynote);
-//		try {
-//			DefaultHttpClient httpclient = new DefaultHttpClient();
-//			HttpPost post = new HttpPost(eventUrl);
-//		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-//		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
-//		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
-//		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
-//		    nameValuePairs.add(new BasicNameValuePair("hours", ""+numhours));
-//		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
-//            try {
-//				httpclient.execute(post);		
-//			} catch (ClientProtocolException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}	
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		String myID = activityIDs.get(actname);
+		String myEvID = activityIDs.get(actname);
+		for (int i=0;i<jday.length();i++) {
+        	try {
+        		if (jday.getJSONObject(i).getString("Name").equals(actname)) {
+        			myEvID = jday.getJSONObject(i).getString("EventID");
+        		}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+        Log.i("Edit Date Data ", actname+" "+myID+" "+myEvID+" "+mHours+" "+mynote);
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			HttpPost post = new HttpPost(editUrl);
+		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		    nameValuePairs.add(new BasicNameValuePair("eventID", myEvID));
+		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
+		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
+		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
+		    nameValuePairs.add(new BasicNameValuePair("hours", ""+mHours));
+		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+            try {
+				httpclient.execute(post);		
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	void delDateData(String actname, String mynote) {
-		String arr[] = actname.split("\n");
-		String myID = activityIDs.get(arr[0]);
-        Log.i("Del Date Data ", arr[0]+" "+myID+" "+mHours+" "+mynote);
-//		try {
-//			DefaultHttpClient httpclient = new DefaultHttpClient();
-//			HttpPost post = new HttpPost(eventUrl);
-//		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-//		    nameValuePairs.add(new BasicNameValuePair("date", dateUrl));
-//		    nameValuePairs.add(new BasicNameValuePair("activityID", myID));
-//		    nameValuePairs.add(new BasicNameValuePair("note", mynote));
-//		    nameValuePairs.add(new BasicNameValuePair("hours", ""+numhours));
-//		    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//			post.setHeader("Cookie", "PHPSESSID=" + jSessionid);
-//            try {
-//				httpclient.execute(post);		
-//			} catch (ClientProtocolException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}	
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		String myID = activityIDs.get(actname);
+		String myEvID = activityIDs.get(actname);
+		for (int i=0;i<jday.length();i++) {
+        	try {
+        		if (jday.getJSONObject(i).getString("Name").equals(actname)) {
+        			myEvID = jday.getJSONObject(i).getString("EventID");
+        		}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+        Log.i("Del Date Data ", actname+" "+myID+" "+myEvID+" "+mHours+" "+mynote);
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			HttpDelete del = new HttpDelete(eventUrl+"/"+myEvID);
+			del.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+            try {
+				httpclient.execute(del);		
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
     private class StableArrayAdapter extends ArrayAdapter<String> {
 	    HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
