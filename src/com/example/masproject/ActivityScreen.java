@@ -15,17 +15,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ActivityScreen extends Activity {
 	TextView txtDate;
@@ -42,12 +42,19 @@ public class ActivityScreen extends Activity {
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;    
-    
+    HashMap<String, List<String>> listDataChild;  
+    AlertDialog alert;
+    AlertDialog.Builder addbuilder;
+    AlertDialog.Builder editbuilder;
+    //AlertDialog.Builder viewbuilder;
+    LayoutInflater inflater;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_screen);
         super.onCreate(savedInstanceState);
+        addbuilder = new AlertDialog.Builder(this);
+        editbuilder = new AlertDialog.Builder(this);
+        inflater = this.getLayoutInflater();
         // Time and date init
         txtDate = (TextView) findViewById(R.id.txtDate);            
         dateTitle = titleFormat.format(new Date());
@@ -68,7 +75,7 @@ public class ActivityScreen extends Activity {
             	dateTitle = titleFormat.format(cal.getTime());  
     	        txtDate.setText(dateTitle);
             	dateUrl = urlFormat.format(cal.getTime());       
-            	updateListData();
+            	updateList();
             }
         });	 
         // Next day button
@@ -78,76 +85,70 @@ public class ActivityScreen extends Activity {
             	dateTitle = titleFormat.format(cal.getTime()); 
     	        txtDate.setText(dateTitle); 
             	dateUrl = urlFormat.format(cal.getTime());   
-            	updateListData();
+            	updateList();
             }
         });	 
         // Get the listview
         expListView = (ExpandableListView) findViewById(R.id.lvExp);	 
         // Preparing list data
         prepareListData();	 
-        // setting list adapter
+        // Setting list adapter
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);	 
-        expListView.setAdapter(listAdapter);	 
-        // Listview Group click listener
-        expListView.setOnGroupClickListener(new OnGroupClickListener() {	 
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                    int groupPosition, long id) {
-                 Toast.makeText(getApplicationContext(),
-                 "Group Clicked " + listDataHeader.get(groupPosition),
-                 Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });	 
-        // Listview Group expanded listener
-        expListView.setOnGroupExpandListener(new OnGroupExpandListener() {	 
-            @Override
-            public void onGroupExpand(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        listDataHeader.get(groupPosition) + " Expanded",
-//                        Toast.LENGTH_SHORT).show();
-            }
-        });	 
-        // Listview Group collasped listener
-        expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {	 
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        listDataHeader.get(groupPosition) + " Collapsed",
-//                        Toast.LENGTH_SHORT).show();
-            }
-        });	 
+        expListView.setAdapter(listAdapter);	  
         // Listview on child click listener
         expListView.setOnChildClickListener(new OnChildClickListener() {	 
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                     int groupPosition, int childPosition, long id) {
-                Toast.makeText(getApplicationContext(),
-                listDataHeader.get(groupPosition) + " : "
-                + listDataChild.get(listDataHeader.get(groupPosition)).get(
-                childPosition), Toast.LENGTH_SHORT).show();
+            	if (groupPosition == 0) { // Add Activity
+            		addActivity(childPosition);
+            	} else if (groupPosition == 1) { // Edit/Delete Activity
+            		editActivity(childPosition);
+            	} else if (groupPosition == 2) { // View Activity           		
+            	}
                 return false;
             }
         });
-        // Expand Activity List by default
-        expListView.expandGroup(1);
+        // Expand List by default
+    	if (listDataChild.get(listDataHeader.get(1)).size() > 0)
+            expListView.expandGroup(1); 	
+    	if (listDataChild.get(listDataHeader.get(2)).size() > 0)
+            expListView.expandGroup(2); 
+    	// Instantiate an AlertDialog.Builder
     }
-    // Update data when day changes
-    private void updateListData() {  
-        expListView.collapseGroup(0); 	
-        expListView.collapseGroup(1);  
-    	int i = 0;
-        List<String> activitylist = new ArrayList<String>();
-    	getDateData();
-        for (i=0;i<jday.length();i++) {
-        	try {
-				activitylist.add(jday.getJSONObject(i).getString("Name"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-        }
-        listDataChild.put(listDataHeader.get(1), activitylist); 
-        expListView.expandGroup(1); 	
+    private void addActivity(int childpos) {
+    	addbuilder.setView(inflater.inflate(R.layout.alert_view, null))
+    	.setTitle("Add Activity: " + listDataChild.get(listDataHeader.get(0)).get(childpos))
+    	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	           	public void onClick(DialogInterface dialog, int id) {
+	        	   alert.dismiss();
+	           	};
+		})
+    	.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	           	public void onClick(DialogInterface dialog, int id) {
+	        	   alert.dismiss();
+	           	};
+		});
+    	alert = addbuilder.create();
+    	alert.show();
+		TextView text = (TextView) alert.findViewById(R.id.desc);
+		text.setText("Android custom dialog " + childpos);
+    }
+    private void editActivity(int childpos) {
+    	//listDataChild.get(listDataHeader.get(1)).get(childpos);
+    	editbuilder.setTitle("Edit Activity")
+    	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	           	public void onClick(DialogInterface dialog, int id) {
+	        	   alert.dismiss();
+	           	};
+		})
+    	.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	           	public void onClick(DialogInterface dialog, int id) {
+	        	   alert.dismiss();
+	           	};
+		});
+    	alert = editbuilder.create();
+    	alert.show();
     }
     // List data init
     private void prepareListData() {
@@ -159,7 +160,8 @@ public class ActivityScreen extends Activity {
     	getActData();
         // Adding header data
         listDataHeader.add("Add New Activity");
-        listDataHeader.add("Activity List"); 
+        listDataHeader.add("Self-Reported Activities"); 
+        listDataHeader.add("Auto-Reported Activities"); 
         // Adding child data
         List<String> newactivity = new ArrayList<String>();
         for (i=0;i<jadd.length();i++) {
@@ -169,37 +171,43 @@ public class ActivityScreen extends Activity {
 				e.printStackTrace();
 			}
         }    
-        List<String> activitylist = new ArrayList<String>();
-        for (i=0;i<jday.length();i++) {
+        // Putting data in list
+        listDataChild.put(listDataHeader.get(0), newactivity);
+        // Set init date data
+        setDateData();
+    }
+    void setDateData() {
+    	List<String> selfactivitylist = new ArrayList<String>();
+        List<String> autoactivitylist = new ArrayList<String>();
+        for (int i=0;i<jday.length();i++) {
         	try {
-				activitylist.add(jday.getJSONObject(i).getString("Name"));
+                Log.i("TPE ",jday.getJSONObject(i).getString("ThirdPartyEntry"));
+        		if (jday.getJSONObject(i).getString("ThirdPartyEntry").equals("0")) {
+        			selfactivitylist.add(jday.getJSONObject(i).getString("Name") + "\n"
+        				+ jday.getJSONObject(i).getString("Hours") + " hours");
+        		} else { 
+        			autoactivitylist.add(jday.getJSONObject(i).getString("Name") + "\n"
+            				+ jday.getJSONObject(i).getString("Hours") + " hours");
+        		}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
         }
         // putting data in list
-        listDataChild.put(listDataHeader.get(0), newactivity);
-        listDataChild.put(listDataHeader.get(1), activitylist);
+        listDataChild.put(listDataHeader.get(1), selfactivitylist);
+        listDataChild.put(listDataHeader.get(2), autoactivitylist);
     }
-    // Get data for specific date
-    void getDateData() {
-        HTTPInteraction httpobj= new HTTPInteraction();
-		try {
-			HttpGet request = new HttpGet(infoUrl + dateUrl);
-			request.setHeader("Cookie", "PHPSESSID=" + jSessionid);
-			DefaultHttpClient httpclient = new DefaultHttpClient();
-            try {
-				HttpResponse resp = httpclient.execute(request);
-				String src = httpobj.parseResponse(resp);
-				jday = new JSONArray(src);
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    // Update data when day changes
+    private void updateList() {  
+        expListView.collapseGroup(0); 	
+        expListView.collapseGroup(1); 
+        expListView.collapseGroup(2);  
+        getDateData();
+    	setDateData();
+    	if (listDataChild.get(listDataHeader.get(1)).size() > 0)
+            expListView.expandGroup(1); 	
+    	if (listDataChild.get(listDataHeader.get(2)).size() > 0)
+            expListView.expandGroup(2); 
     }
 	// Get all possible activities
 	void getActData() {
@@ -212,6 +220,28 @@ public class ActivityScreen extends Activity {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
 				jadd = new JSONArray(src);				
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    // Get data for specific date
+    void getDateData() {
+        HTTPInteraction httpobj= new HTTPInteraction();
+		try {
+			HttpGet request = new HttpGet(infoUrl + dateUrl);
+			request.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+            try {
+				HttpResponse resp = httpclient.execute(request);
+				String src = httpobj.parseResponse(resp);
+				jday = new JSONArray(src);
+                Log.i("Date Data ",jday.toString());
+				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
