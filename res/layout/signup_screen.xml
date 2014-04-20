@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_marginLeft="5dip"
+        android:text="Full Name:"/>
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="text"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="5dip"
+        android:text="DOB (yyyy-mm-dd):"/>
+    <EditText
+        android:id="@+id/dob"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="text"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="5dip"
+        android:text="Email:"/>
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="textEmailAddress"
+        />
+  <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="5dip"
+        android:text="Username:"/>
+    <EditText
+        android:id="@+id/user"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="text"
+        />
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="5dip"
+        android:text="Password:"/>
+    <EditText
+        android:id="@+id/et_pw1"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="textPassword"/>"
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="5dip"
+        android:text="Confirm Password:"/>
+    <EditText
+        android:id="@+id/et_pw2"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="textPassword"/>"
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="10dip"
+        android:text="Sign Up and Log In" />
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:text="Cancel" />
+
+</LinearLayout>
+

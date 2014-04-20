@@ -46,6 +46,7 @@ public class LoginScreen extends Activity {
         
         jSessionid = "blank";
         loginUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/login?username=";
+        
         builder = new AlertDialog.Builder(this);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 	           public void onClick(DialogInterface dialog, int id) {
@@ -59,14 +60,16 @@ public class LoginScreen extends Activity {
 	//Login Button     
     View.OnClickListener myhandler1 = new View.OnClickListener() {
         public void onClick(View v) {       	
-            //Attempting Login        
-            loginUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/login?username=";
-        	loginUrl  = loginUrl + inputName.getText().toString().trim() + "&password=" + inputPassword.getText().toString().trim(); 
-            HttpGet httget = new HttpGet(loginUrl);
+            //Attempting Login       
+            HttpGet httget = new HttpGet(loginUrl+inputName.getText().toString().trim()
+            		+"&password="+inputPassword.getText().toString().trim());
             DefaultHttpClient httpclient = new DefaultHttpClient();
             try {
+                HTTPInteraction httpobj= new HTTPInteraction();
 				HttpResponse response = httpclient.execute(httget);
                 System.out.println(response.toString());
+				String msg = httpobj.parseResponse(response);
+	            System.out.println(msg);
 	            List<Cookie> cookies = httpclient.getCookieStore().getCookies();
 	            if (cookies.isEmpty()) {
 	                System.out.println("no cookie found");
@@ -89,7 +92,6 @@ public class LoginScreen extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
-
         	//Creating a new Intent
             Intent nextScreen = new Intent(getApplicationContext(), ActivityScreen.class);
             //Sending data to another Activity
@@ -101,11 +103,8 @@ public class LoginScreen extends Activity {
 	  // New Account Button
 	  View.OnClickListener myhandler2 = new View.OnClickListener() {
 	    public void onClick(View v) {
-        	//Creating a new Intent
-            //Intent nextScreen = new Intent(getApplicationContext(), SignupScreen.class);
-        	//Starting new Intent
-            //startActivity(nextScreen);
-	        
+            Intent nextScreen = new Intent(getApplicationContext(), SignupScreen.class);
+            startActivity(nextScreen);	        
 	    }
 	  };       
 }

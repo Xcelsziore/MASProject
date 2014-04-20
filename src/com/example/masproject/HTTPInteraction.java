@@ -29,28 +29,23 @@ public class HTTPInteraction {
 		is = null;
 	}
 
-	public InputStream httpRequest(String url,
+	public HttpResponse httpRequest(String url,
 			ArrayList<NameValuePair> nameValuePairs) {
-
 		// http post
+		HttpResponse response = null;
 		try {
-
-			System.out.println("test1");
+			System.out.println("posting");
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(url);
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			System.out.println("test2");
-			HttpResponse response = httpclient.execute(httppost);
+			response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 			is = entity.getContent();
 			System.out.println(is + "response");
-
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			Log.e("log_tag", "Error in http connection " + e.toString());
 		}
-		return is;
+		return response;
 	}
 
 	public String parseResponse(HttpResponse response) {
@@ -58,30 +53,24 @@ public class HTTPInteraction {
 		try {
 			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         StringBuffer sb = new StringBuffer("");
         String line = "";
         String NL = System.getProperty("line.separator");
         try {
-			while ((line = in.readLine()) != null) {
+			while ((line = in.readLine()) != null)
 			    sb.append(line + NL);
-			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         try {
 			in.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
         String result = sb.toString();
         return result;
 	}
