@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -59,6 +60,7 @@ public class ActivityScreen extends Activity {
     AlertDialog.Builder addbuilder;
     AlertDialog.Builder editbuilder;
     AlertDialog.Builder viewbuilder;
+    AlertDialog.Builder menubuilder;
     LayoutInflater inflater;
     ArrayList<String> hourslist;
     StableArrayAdapter adapter;
@@ -71,6 +73,7 @@ public class ActivityScreen extends Activity {
         addbuilder = new AlertDialog.Builder(this);
         editbuilder = new AlertDialog.Builder(this);
         viewbuilder = new AlertDialog.Builder(this);
+        menubuilder = new AlertDialog.Builder(this);
         inflater = this.getLayoutInflater();
         // Time and date init
         txtDate = (TextView) findViewById(R.id.txtDate);            
@@ -452,6 +455,23 @@ public class ActivityScreen extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ( keyCode == KeyEvent.KEYCODE_MENU ) {
+	        Log.i("Key", "MENU pressed");
+	    	menubuilder//.setView(inflater.inflate(R.layout.menu_view, null))
+	    	.setTitle("Go To...").setMessage("Test Message")
+	    	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	           	public void onClick(DialogInterface dialog, int id) {
+		        	alert.dismiss();
+	           	};
+			});
+	    	alert = menubuilder.create();
+	    	alert.show();
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}
     private class StableArrayAdapter extends ArrayAdapter<String> {
 	    HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
