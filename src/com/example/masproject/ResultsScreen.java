@@ -50,14 +50,13 @@ public class ResultsScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
     	Log.i("Activity Start","Results Screen");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.results_screen);
-		
-        txtWeek = (TextView) findViewById(R.id.weekof);      
+        setContentView(R.layout.results_screen);     
 //        physB = (Button) findViewById(R.id.btnPhys);
 //        mentalB = (Button) findViewById(R.id.btnPhys);
 //        socialB = (Button) findViewById(R.id.btnPhys);
         nextB = (Button) findViewById(R.id.nextW);
-        prevB = (Button) findViewById(R.id.prevW);
+        prevB = (Button) findViewById(R.id.prevW);		
+        txtWeek = (TextView) findViewById(R.id.weekof); 
         // Prev week button
         prevB.setOnClickListener(new View.OnClickListener() {	 
             public void onClick(View arg0) {

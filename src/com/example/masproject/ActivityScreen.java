@@ -42,6 +42,7 @@ public class ActivityScreen extends Activity {
 	TextView txtDate;
 	TextView txtDesc;
 	Calendar cal;
+	Calendar cal2;
 	SimpleDateFormat titleFormat = new SimpleDateFormat("EEEE, MM/d/yy");	
 	SimpleDateFormat urlFormat = new SimpleDateFormat("y-MM-d");	 
 	String dateTitle;
@@ -81,8 +82,10 @@ public class ActivityScreen extends Activity {
         dateTitle = titleFormat.format(new Date());
         dateUrl = urlFormat.format(new Date());     
         txtDate.setText(dateTitle);
-        cal = Calendar.getInstance();   
-        cal.setTime(new Date());         
+        cal = Calendar.getInstance();  
+        cal2 = Calendar.getInstance();   
+        cal.setTime(new Date());  
+        cal2.setTime(new Date());        
         // Getting session cookie from last screen 
         Intent mI = getIntent();
         jSessionid = mI.getStringExtra("sess");     
@@ -102,11 +105,13 @@ public class ActivityScreen extends Activity {
         // Next day button
         btnNext.setOnClickListener(new View.OnClickListener() {	 
             public void onClick(View arg0) {
-            	cal.add(Calendar.DATE, 1);  
-            	dateTitle = titleFormat.format(cal.getTime()); 
-    	        txtDate.setText(dateTitle); 
-            	dateUrl = urlFormat.format(cal.getTime());   
-            	updateList();
+            	if (cal.get(Calendar.DAY_OF_YEAR) < cal2.get(Calendar.DAY_OF_YEAR)) {
+	            	cal.add(Calendar.DATE, 1);  
+	            	dateTitle = titleFormat.format(cal.getTime()); 
+	    	        txtDate.setText(dateTitle); 
+	            	dateUrl = urlFormat.format(cal.getTime());   
+	            	updateList();
+            	}
             }
         });	 
         // Get the listview
