@@ -472,11 +472,10 @@ public class ActivityScreen extends Activity {
 	                       startActivity(nextScreen);
 	                       finish();
 	                   } else if (pos == 2) { // My Results 
-//		                       Intent nextScreen = new Intent(getApplicationContext(), ReportScreen.class);
-//		                       nextScreen.putExtra("sess", jSessionid);
-//		                       startActivity(nextScreen);
-//		                       //Finish to disallow back button access
-//		                       finish();
+	                       Intent nextScreen = new Intent(getApplicationContext(), ResultsScreen.class);
+	                       nextScreen.putExtra("sess", jSessionid);
+	                       startActivity(nextScreen);
+	                       finish();
 	                   } else if (pos == 3) { // Log Out  
 	                       Intent nextScreen = new Intent(getApplicationContext(), LoginScreen.class);
 	                       startActivity(nextScreen);

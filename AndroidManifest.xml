@@ -27,6 +27,8 @@
 					android:screenOrientation="portrait"     ></activity>
         <activity 	android:name="com.example.masproject.ActivityScreen"  
 					android:screenOrientation="portrait"     ></activity>
+        <activity 	android:name="com.example.masproject.ResultsScreen"  
+					android:screenOrientation="portrait"     ></activity>
         <activity 	android:name="com.example.masproject.TeamScreen"  
 					android:screenOrientation="portrait"     ></activity>
         <activity 	android:name="com.example.masproject.ExpandableListAdapter"  

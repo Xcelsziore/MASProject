@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+  <TextView
+        android:id="@+id/resultTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14pt"
+        android:textColor="#444444"
+        android:layout_gravity="center"
+        android:layout_margin="5dip"
+        android:text="Total Points Per Day"/>
+    <LinearLayout
+        android:id="@+id/graph"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent" 
+        android:layout_height="300dp" />
+<!--<LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">
+        <Button
+        	android:id="@+id/btnPhys"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Physical"
+        	android:layout_margin="4dip"
+            android:layout_weight="1.0" />
+        <Button
+        	android:id="@+id/btnMental"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Mental"
+        	android:layout_margin="4dip"
+            android:layout_weight="1.0" />
+        <Button
+        android:id="@+id/btnSocial"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Social"
+        	android:layout_margin="4dip"
+            android:layout_weight="1.0" />
+    </LinearLayout>     -->
+  	<TextView
+        android:id="@+id/weekof"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:textColor="#444444"
+        android:layout_gravity="center"
+        android:layout_margin="5dip"
+        android:text="Week of INVALID"/> 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">
+        <Button
+        android:id="@+id/prevW"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Prev Week"
+        	android:layout_margin="4dip"
+            android:layout_weight="1.0" />
+        <Button
+        android:id="@+id/nextW"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Next Week"
+        	android:layout_margin="4dip"
+            android:layout_weight="1.0" />
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -281,14 +281,13 @@ public class TeamScreen extends Activity {
 	                       nextScreen.putExtra("sess", jSessionid);
 	                       startActivity(nextScreen);
 	                       finish();
-	                   } else if (pos == 1) { // Teams
+	                   } else if (pos == 1) { // My Teams
 	                	   alert.dismiss();
-	                   } else if (pos == 2) { // View Reports  
-//  		                       Intent nextScreen = new Intent(getApplicationContext(), ReportScreen.class);
-//  		                       nextScreen.putExtra("sess", jSessionid);
-//  		                       startActivity(nextScreen);
-//  		                       //Finish to disallow back button access
-//  		                       finish();
+	                   } else if (pos == 2) { // My Results 
+	                       Intent nextScreen = new Intent(getApplicationContext(), ResultsScreen.class);
+	                       nextScreen.putExtra("sess", jSessionid);
+	                       startActivity(nextScreen);
+	                       finish();
 	                   } else if (pos == 3) { // Log Out   	
 	                       Intent nextScreen = new Intent(getApplicationContext(), LoginScreen.class);
 	                       startActivity(nextScreen);
