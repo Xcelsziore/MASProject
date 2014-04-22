@@ -87,6 +87,7 @@ public class ActivityScreen extends Activity {
         cal.setTime(new Date());  
         cal2.setTime(new Date());        
         // Getting session cookie from last screen 
+        jSessionid = "blank";
         Intent mI = getIntent();
         jSessionid = mI.getStringExtra("sess");     
         // Buttons
@@ -141,7 +142,7 @@ public class ActivityScreen extends Activity {
             expListView.expandGroup(1); 	
     	if (listDataChild.get(listDataHeader.get(2)).size() > 0)
             expListView.expandGroup(2); 
-    	// Init hours array
+    	// Init hours array/list adapter
     	String[] hourvals = new String[] { "0.5", "1.0", "1.5",
                 "2.0", "2.5", "3.0", "3.5", "4.0",
                 "4.5", "5.0", "5.5", "6.0", "6.5", "7.0",
@@ -484,7 +485,6 @@ public class ActivityScreen extends Activity {
 	                   } else if (pos == 3) { // Log Out  
 	                       Intent nextScreen = new Intent(getApplicationContext(), LoginScreen.class);
 	                       startActivity(nextScreen);
-	                       //Finish to disallow back button access
 	                       finish();
 	                   }
 	                   return;

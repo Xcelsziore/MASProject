@@ -35,7 +35,6 @@ public class TeamScreen extends Activity {
 
 	AlertDialog alert;
 	AlertDialog.Builder builder;
-	AlertDialog.Builder addbuilder;
 	AlertDialog.Builder menubuilder;
 	LayoutInflater inflater;
 	    
@@ -69,7 +68,6 @@ public class TeamScreen extends Activity {
         });	 
         // Init builders/inflater
         builder = new AlertDialog.Builder(this);
-        addbuilder = new AlertDialog.Builder(this);
         menubuilder = new AlertDialog.Builder(this);
         inflater = this.getLayoutInflater();
 		// Get the listview

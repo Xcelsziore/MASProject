@@ -81,8 +81,7 @@ public class LineGraph{
 		renderer3.setPointStyle(PointStyle.CIRCLE);
 		renderer3.setFillPoints(true);
 		
-		return ChartFactory.getLineChartView(context, dataset, mRenderer);
-		
+		return ChartFactory.getLineChartView(context, dataset, mRenderer);		
 	}
 
 }

@@ -130,7 +130,6 @@ public class ResultsScreen extends Activity {
     	LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
     	layout.removeAllViews();
     	layout.addView(gView);
-        //gView.repaint();
 	}
 	// Get data for specific date
     private void getMyWeekData() {

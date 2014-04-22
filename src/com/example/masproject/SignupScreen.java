@@ -37,7 +37,6 @@ public class SignupScreen extends Activity {
 	 AlertDialog.Builder builder;
 	 String jSessionid;
 	 String registerUrl;
-	 String loginUrl;
 	 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,6 @@ public class SignupScreen extends Activity {
 		HTTPInteraction httpobj= new HTTPInteraction();
         jSessionid = "blank";
         registerUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/register";
-        loginUrl = "http://dev.m.gatech.edu/developer/pconner3/widget/4261/c/api/login?username=";
         
         builder = new AlertDialog.Builder(this);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
