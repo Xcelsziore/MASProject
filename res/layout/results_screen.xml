@@ -18,30 +18,7 @@
         android:id="@+id/graph"
         android:orientation="horizontal"
         android:layout_width="fill_parent" 
-        android:layout_height="300dp" />
-<!--<LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content">
-        <Button
-        	android:id="@+id/btnPhys"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Physical"
-        	android:layout_margin="4dip"
-            android:layout_weight="1.0" />
-        <Button
-        	android:id="@+id/btnMental"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Mental"
-        	android:layout_margin="4dip"
-            android:layout_weight="1.0" />
-        <Button
-        android:id="@+id/btnSocial"
-            android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Social"
-        	android:layout_margin="4dip"
-            android:layout_weight="1.0" />
-    </LinearLayout>     -->
+        android:layout_height="350dp" />
   	<TextView
         android:id="@+id/weekof"
         android:layout_width="wrap_content"

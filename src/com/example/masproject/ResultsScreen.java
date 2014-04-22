@@ -5,11 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.achartengine.GraphicalView;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,13 +22,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ResultsScreen extends Activity {
-//
-//	 Button physB;
-//	 Button mentalB;
-//	 Button socialB;
+
 	 Button nextB;
 	 Button prevB; 		 
 	 TextView txtWeek;	 
@@ -39,31 +39,35 @@ public class ResultsScreen extends Activity {
 	 AlertDialog.Builder menubuilder;	 
 	 String jSessionid;
 	 String reportUrl;
-	 
+	 LineGraph myGraph;
 	 String startdateTitle;
 	 String enddateTitle;
 	 String startdateUrl;
 	 String enddateUrl;
 	 JSONArray jweek;
+	 double[] physPts;
+	 double[] mentalPts;
+	 double[] socialPts;
 	 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	Log.i("Activity Start","Results Screen");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.results_screen);     
-//        physB = (Button) findViewById(R.id.btnPhys);
-//        mentalB = (Button) findViewById(R.id.btnPhys);
-//        socialB = (Button) findViewById(R.id.btnPhys);
+        setContentView(R.layout.results_screen);
+        //init arrays
+        physPts = new double[7];
+        mentalPts = new double[7];
+        socialPts = new double[7];
         nextB = (Button) findViewById(R.id.nextW);
         prevB = (Button) findViewById(R.id.prevW);		
         txtWeek = (TextView) findViewById(R.id.weekof); 
         // Prev week button
         prevB.setOnClickListener(new View.OnClickListener() {	 
             public void onClick(View arg0) {
-            	cal.add(Calendar.DATE, -14);  
+            	cal.add(Calendar.DATE, -13);  
                 startdateUrl = urlFormat.format(cal.getTime()); 
                 startdateTitle = dateFormat.format(cal.getTime()); 
-            	cal.add(Calendar.DATE, 7); 
+            	cal.add(Calendar.DATE, 6); 
                 enddateUrl = urlFormat.format(cal.getTime()); 
                 enddateTitle = dateFormat.format(cal.getTime());   
                 txtWeek.setText("Week of "+startdateTitle+" - "+enddateTitle);
@@ -74,9 +78,10 @@ public class ResultsScreen extends Activity {
         nextB.setOnClickListener(new View.OnClickListener() {	 
             public void onClick(View arg0) {
             	if (cal.get(Calendar.DAY_OF_YEAR) < cal2.get(Calendar.DAY_OF_YEAR)) {
+	            	cal.add(Calendar.DATE, 1); 
 	                startdateUrl = urlFormat.format(cal.getTime()); 
 	                startdateTitle = dateFormat.format(cal.getTime()); 
-	            	cal.add(Calendar.DATE, 7); 
+	            	cal.add(Calendar.DATE, 6); 
 	                enddateUrl = urlFormat.format(cal.getTime()); 
 	                enddateTitle = dateFormat.format(cal.getTime());
 	                txtWeek.setText("Week of "+startdateTitle+" - "+enddateTitle);
@@ -91,11 +96,11 @@ public class ResultsScreen extends Activity {
         cal2.setTime(new Date());         
         enddateUrl = urlFormat.format(cal.getTime()); 
         enddateTitle = dateFormat.format(cal.getTime());      
-    	cal.add(Calendar.DATE, -7);  
+    	cal.add(Calendar.DATE, -6);  
         startdateUrl = urlFormat.format(cal.getTime()); 
         startdateTitle = dateFormat.format(cal.getTime()); 
         txtWeek.setText("Week of "+startdateTitle+" - "+enddateTitle);
-    	cal.add(Calendar.DATE, 7);          
+    	cal.add(Calendar.DATE, 6);          
         // Getting session cookie from last screen 
         jSessionid = "blank";
         Intent mI = getIntent();
@@ -105,11 +110,27 @@ public class ResultsScreen extends Activity {
         builder = new AlertDialog.Builder(this);
         menubuilder = new AlertDialog.Builder(this);
 		@SuppressWarnings("unused")
-		HTTPInteraction httpobj= new HTTPInteraction();
-		getMyWeekData();
+		HTTPInteraction httpobj= new HTTPInteraction();  
+		//init graph
+		updateGraph();
     }
 	private void updateGraph() {
 		getMyWeekData();		
+		for (int i=0;i<jweek.length();i++) {
+        	try {
+        		physPts[i] = Double.valueOf(jweek.getJSONObject(i).getString("PhysicalPoints"));
+        		mentalPts[i] = Double.valueOf(jweek.getJSONObject(i).getString("MentalPoints"));
+        		socialPts[i] = Double.valueOf(jweek.getJSONObject(i).getString("SocialPoints"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+		myGraph = new LineGraph();
+    	GraphicalView gView = myGraph.getView(this, physPts, mentalPts, socialPts);        
+    	LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
+    	layout.removeAllViews();
+    	layout.addView(gView);
+        //gView.repaint();
 	}
 	// Get data for specific date
     private void getMyWeekData() {
@@ -122,7 +143,7 @@ public class ResultsScreen extends Activity {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
 				jweek = new JSONArray(src);
-                Log.i("My Week Data ",jweek.toString());				
+                Log.i("My Week Data ",jweek.toString()+jweek.length());				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
