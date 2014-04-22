@@ -32,6 +32,7 @@ public class LoginScreen extends Activity {
 	 String loginUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	Log.i("Activity Start","Login Screen");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
 		inputName = (EditText) findViewById(R.id.et_un);
@@ -60,14 +61,13 @@ public class LoginScreen extends Activity {
 	//Login Button     
     View.OnClickListener myhandler1 = new View.OnClickListener() {
         public void onClick(View v) {       	
-            //Attempting Login       
+            //Attempting Login      
             HttpGet httget = new HttpGet(loginUrl+inputName.getText().toString().trim()
             		+"&password="+inputPassword.getText().toString().trim());
             DefaultHttpClient httpclient = new DefaultHttpClient();
             try {
                 HTTPInteraction httpobj= new HTTPInteraction();
 				HttpResponse response = httpclient.execute(httget);
-                System.out.println(response.toString());
 				String msg = httpobj.parseResponse(response);
 	            System.out.println(msg);
 	            List<Cookie> cookies = httpclient.getCookieStore().getCookies();
@@ -86,6 +86,12 @@ public class LoginScreen extends Activity {
 	                        break;
 	                    }
 	                }
+	                if (jSessionid == "blank") {
+		                System.out.println("no cookie found");
+		    			builder.setMessage("no cookie found - invalid login");
+						alert = builder.create();				
+						alert.show();		                	
+	                }
 	            }
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -98,6 +104,8 @@ public class LoginScreen extends Activity {
             nextScreen.putExtra("sess", jSessionid);
         	//Starting new Intent
             startActivity(nextScreen);
+            //Finish to disallow back button access
+            finish();
         }
       };
 	  // New Account Button

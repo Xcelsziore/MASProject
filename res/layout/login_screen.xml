@@ -8,6 +8,14 @@
   <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="14pt"
+        android:textColor="#444444"
+        android:layout_gravity="center"
+        android:layout_margin="5dip"
+        android:text="Family Unplugged"/>
+  <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textSize="10pt"
         android:textColor="#444444"
         android:layout_marginRight="9dip"

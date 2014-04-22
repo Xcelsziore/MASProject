@@ -29,7 +29,7 @@ public class HTTPInteraction {
 		is = null;
 	}
 
-	public HttpResponse httpRequest(String url,
+	public HttpResponse httpPost(String url,
 			ArrayList<NameValuePair> nameValuePairs) {
 		// http post
 		HttpResponse response = null;
@@ -43,7 +43,7 @@ public class HTTPInteraction {
 			is = entity.getContent();
 			System.out.println(is + "response");
 		} catch (Exception e) {
-			Log.e("log_tag", "Error in http connection " + e.toString());
+			Log.e("http", "Error in http connection " + e.toString());
 		}
 		return response;
 	}

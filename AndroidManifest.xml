@@ -15,17 +15,22 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.masproject.LoginScreen"            
+            android:name="com.example.masproject.LoginScreen" 
+			android:screenOrientation="portrait"           
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.masproject.SignupScreen" ></activity>
-        <activity android:name="com.example.masproject.ActivityScreen" ></activity>
-        <activity android:name="com.example.masproject.ExpandableListAdapter" ></activity>
-        <activity android:name="com.example.masproject.ActivityList" ></activity>        
+        <activity 	android:name="com.example.masproject.SignupScreen"  
+					android:screenOrientation="portrait"     ></activity>
+        <activity 	android:name="com.example.masproject.ActivityScreen"  
+					android:screenOrientation="portrait"     ></activity>
+        <activity 	android:name="com.example.masproject.TeamScreen"  
+					android:screenOrientation="portrait"     ></activity>
+        <activity 	android:name="com.example.masproject.ExpandableListAdapter"  
+					android:screenOrientation="portrait"     ></activity>  
     </application>
     
 </manifest>

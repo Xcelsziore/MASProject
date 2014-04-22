@@ -2,31 +2,11 @@
 <resources>
 
     <string name="app_name">Family Unplugged</string>
-    <string-array name="hours_array">
-        <item>0.5</item>
-        <item>1.0</item>
-        <item>1.5</item>
-        <item>2.0</item>
-        <item>2.5</item>
-        <item>3.0</item>
-        <item>3.5</item>
-        <item>4.0</item>
-        <item>4.5</item>
-        <item>5.0</item>
-        <item>5.5</item>
-        <item>6.0</item>
-        <item>6.5</item>
-        <item>7.0</item>
-        <item>7.5</item>
-        <item>8.0</item>
-        <item>8.5</item>
-        <item>9.0</item>
-        <item>9.5</item>
-        <item>10.0</item>
+    <string-array name="menu_array">
+        <item>My Activities</item>
+        <item>My Teams</item>
+        <item>My Results</item>
+        <item>Log Out</item>
     </string-array>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="action_settings">Settings</string>
 
 </resources>

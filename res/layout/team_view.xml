@@ -9,9 +9,9 @@
         android:textSize="10pt"
         android:textColor="#444444"
         android:layout_marginLeft="5dip"
-        android:text="Description:"/>
+        android:text="Leader:"/>
   <TextView
-        android:id="@+id/descview"
+        android:id="@+id/leader"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
@@ -22,25 +22,11 @@
         android:textSize="10pt"
         android:textColor="#444444"
         android:layout_marginLeft="5dip"
-        android:text="Hours:"/>
+        android:text="Members:"/>  
   <TextView
-        android:id="@+id/hourview"
+        android:id="@+id/members"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
         android:textSize="9pt"/>
-  <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10pt"
-        android:textColor="#444444"
-        android:layout_marginLeft="5dip"
-        android:text="Reported By:"/>
-  <TextView
-        android:id="@+id/reportby"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:textSize="9pt"/>
-
 </LinearLayout>

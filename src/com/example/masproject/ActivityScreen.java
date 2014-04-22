@@ -68,6 +68,7 @@ public class ActivityScreen extends Activity {
     double mHours;
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	Log.i("Activity Start","Activty List Screen");
         setContentView(R.layout.activity_screen);
         super.onCreate(savedInstanceState);
         addbuilder = new AlertDialog.Builder(this);
@@ -82,7 +83,7 @@ public class ActivityScreen extends Activity {
         txtDate.setText(dateTitle);
         cal = Calendar.getInstance();   
         cal.setTime(new Date());         
-        // Getting session cookie from login screen 
+        // Getting session cookie from last screen 
         Intent mI = getIntent();
         jSessionid = mI.getStringExtra("sess");     
         // Buttons
@@ -226,7 +227,7 @@ public class ActivityScreen extends Activity {
 		})
 		.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
            	public void onClick(DialogInterface dialog, int id) {
-           		delDateData(childname, txtDesc.getText().toString());
+           		delDateData(childname, txtDesc.getText().toString().trim());
         		updateList();
            		alert.dismiss();
            	};
@@ -234,7 +235,7 @@ public class ActivityScreen extends Activity {
     	.setPositiveButton("Save Edit", new DialogInterface.OnClickListener() {
            	public void onClick(DialogInterface dialog, int id) {
            		if (mHours > 0) {
-           			editDateData(childname, txtDesc.getText().toString());
+           			editDateData(childname, txtDesc.getText().toString().trim());
 	        		updateList();
            			alert.dismiss();
            		}
@@ -326,28 +327,28 @@ public class ActivityScreen extends Activity {
             expListView.expandGroup(2); 
     }
 	// Get all possible activities
-	void getActData() {
+	private void getActData() {
         HTTPInteraction httpobj= new HTTPInteraction();
-		try {
-			HttpGet request = new HttpGet(actUrl);
-			request.setHeader("Cookie", "PHPSESSID=" + jSessionid);
-			DefaultHttpClient httpclient = new DefaultHttpClient();
-            try {
-				HttpResponse resp = httpclient.execute(request);
-				String src = httpobj.parseResponse(resp);
-				jadd = new JSONArray(src);		
-                //Log.i("Act Data ",jadd.toString());						
-			} catch (ClientProtocolException e) {
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		HttpGet request = new HttpGet(actUrl);
+		request.setHeader("Cookie", "PHPSESSID=" + jSessionid);
+        try {
+			HttpResponse resp = httpclient.execute(request);
+			String src = httpobj.parseResponse(resp);
+			try {
+				jadd = new JSONArray(src);
+			} catch (JSONException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-		} catch (Exception e) {
+			}		
+            //Log.i("Act Data ",jadd.toString());						
+		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-		}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
     }
     // Get data for specific date
-    void getDateData() {
+    private void getDateData() {
         HTTPInteraction httpobj= new HTTPInteraction();
 		try {
 			HttpGet request = new HttpGet(eventUrl+"?date="+dateUrl);
@@ -357,7 +358,7 @@ public class ActivityScreen extends Activity {
 				HttpResponse resp = httpclient.execute(request);
 				String src = httpobj.parseResponse(resp);
 				jday = new JSONArray(src);
-                Log.i("Date Data ",jday.toString());				
+                //Log.i("Date Data ",jday.toString());				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -368,7 +369,7 @@ public class ActivityScreen extends Activity {
 		}
     }
 	// Add New Activity via POST
-	void addDateData(String actname, String mynote) {
+	private void addDateData(String actname, String mynote) {
 		String myID = activityIDs.get(actname);
         //Log.i("Add Date Data ", actname+" "+myID+" "+numhours+" "+mynote);
 		try {
@@ -392,9 +393,9 @@ public class ActivityScreen extends Activity {
 			e.printStackTrace();
 		}
 	}
-	void editDateData(String actname, String mynote) {
+	private void editDateData(String actname, String mynote) {
 		String myID = activityIDs.get(actname);
-		String myEvID = activityIDs.get(actname);
+		String myEvID = "blank";
 		for (int i=0;i<jday.length();i++) {
         	try {
         		if (jday.getJSONObject(i).getString("Name").equals(actname)) {
@@ -428,8 +429,8 @@ public class ActivityScreen extends Activity {
 			e.printStackTrace();
 		}
 	}
-	void delDateData(String actname, String mynote) {
-		String myEvID = activityIDs.get(actname);
+	private void delDateData(String actname, String mynote) {
+		String myEvID = "blank";
 		for (int i=0;i<jday.length();i++) {
         	try {
         		if (jday.getJSONObject(i).getString("Name").equals(actname)) {
@@ -460,9 +461,32 @@ public class ActivityScreen extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if ( keyCode == KeyEvent.KEYCODE_MENU ) {
 	        Log.i("Key", "MENU pressed");
-	    	menubuilder//.setView(inflater.inflate(R.layout.menu_view, null))
-	    	.setTitle("Go To...").setMessage("Test Message")
-	    	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	    	menubuilder.setTitle("Menu")
+	    	.setItems(R.array.menu_array, new DialogInterface.OnClickListener() {
+	               public void onClick(DialogInterface dialog, int pos) {
+	                   if (pos == 0) { // My Activities
+	                	   alert.dismiss();
+	                   } else if (pos == 1) { // My Teams
+	                       Intent nextScreen = new Intent(getApplicationContext(), TeamScreen.class);
+	                       nextScreen.putExtra("sess", jSessionid);
+	                       startActivity(nextScreen);
+	                       finish();
+	                   } else if (pos == 2) { // My Results 
+//		                       Intent nextScreen = new Intent(getApplicationContext(), ReportScreen.class);
+//		                       nextScreen.putExtra("sess", jSessionid);
+//		                       startActivity(nextScreen);
+//		                       //Finish to disallow back button access
+//		                       finish();
+	                   } else if (pos == 3) { // Log Out  
+	                       Intent nextScreen = new Intent(getApplicationContext(), LoginScreen.class);
+	                       startActivity(nextScreen);
+	                       //Finish to disallow back button access
+	                       finish();
+	                   }
+	                   return;
+	               }
+	        })
+	    	.setNegativeButton("Close", new DialogInterface.OnClickListener() {
 	           	public void onClick(DialogInterface dialog, int id) {
 		        	alert.dismiss();
 	           	};

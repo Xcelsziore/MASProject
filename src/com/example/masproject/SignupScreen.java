@@ -17,6 +17,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +41,7 @@ public class SignupScreen extends Activity {
 	 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	Log.i("Activity Start","Signup Screen");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_screen);
 		inputName = (EditText) findViewById(R.id.name);
@@ -79,10 +81,10 @@ public class SignupScreen extends Activity {
 				alert.show();	
 				return;        		
         	}
-            DefaultHttpClient httpclient1 = new DefaultHttpClient();    
+            DefaultHttpClient httpclient1 = new DefaultHttpClient();
+            HTTPInteraction httpobj= new HTTPInteraction();    
         	//Attempting Signup	
         	try {
-                HTTPInteraction httpobj= new HTTPInteraction();
     			HttpPost post = new HttpPost(registerUrl);
     		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
     		    nameValuePairs.add(new BasicNameValuePair("username", inputUname.getText().toString().trim()));
@@ -111,45 +113,8 @@ public class SignupScreen extends Activity {
             //Go back to Login   
             Intent nextScreen = new Intent(getApplicationContext(), LoginScreen.class);
             startActivity(nextScreen);	
-            /*/Attempting Login     
-            System.out.println("Attempting login");
-			builder.setMessage("Signup Succesful - Attempting login");
-			alert = builder.create();				
-			alert.show();	 
-            DefaultHttpClient httpclient = new DefaultHttpClient();   
-            HttpGet httget = new HttpGet(loginUrl+inputUname.getText().toString().trim()
-            		+"&password="+inputPass1.getText().toString().trim());
-            try {
-                HTTPInteraction httpobj= new HTTPInteraction();
-				HttpResponse response = httpclient.execute(httget);
-				String msg = httpobj.parseResponse(response);
-	            System.out.println(msg);
-	            List<Cookie> cookies = httpclient.getCookieStore().getCookies();
-	            if (cookies.isEmpty()) {
-	                System.out.println("no cookie found");
-	                alert.dismiss();
-	    			builder.setMessage("no cookie found - invalid login");
-					alert = builder.create();				
-					alert.show();	
-					return;
-	            } else {
-	                for (int i = 0; i < cookies.size(); i++) {
-	                    Cookie cookie = cookies.get(i);
-                        Log.i("Cookies","- " + cookies.get(i).toString());
-	                    if(cookie.getName().equals("PHPSESSID")){
-	                        jSessionid = cookie.getValue();
-	                        break;
-	                    }
-	                }
-	            }
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-            Intent nextScreen = new Intent(getApplicationContext(), ActivityScreen.class);
-            nextScreen.putExtra("sess", jSessionid);
-            startActivity(nextScreen);*/
+            //Finish to disallow back button access
+            finish();
         }
       };
 	  // Cancel Button
